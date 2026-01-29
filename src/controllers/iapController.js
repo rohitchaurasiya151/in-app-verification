@@ -1,8 +1,10 @@
 
 import { AppleStoreClient } from '../AppleStoreClient.js';
+import { GooglePlayClient } from '../GooglePlayClient.js';
 import { config } from '../config.js';
 
 const client = new AppleStoreClient();
+const googleClient = new GooglePlayClient();
 
 export const verifyAppleTransaction = async (req, res) => {
     try {
@@ -85,6 +87,37 @@ export const decodeToken = async (req, res) => {
 
     } catch (error) {
         console.error('Decode Token Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+export const verifyAndroidTransaction = async (req, res) => {
+    try {
+        const { productId, token, isSubscription } = req.body;
+
+        if (!productId || !token) {
+            return res.status(400).json({ error: 'Product ID (or Subscription ID) and Token are required' });
+        }
+
+        console.log(`Verifying Android Transaction: ${productId} (Subscription: ${!!isSubscription})`);
+
+        let response;
+        if (isSubscription) {
+            response = await googleClient.verifySubscription(productId, token);
+        } else {
+            response = await googleClient.verifyProduct(productId, token);
+        }
+
+        res.json({
+            success: true,
+            data: response
+        });
+
+    } catch (error) {
+        console.error('Verify Android Transaction Error:', error);
         res.status(500).json({
             success: false,
             error: error.message

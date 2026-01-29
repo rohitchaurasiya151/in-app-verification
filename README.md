@@ -24,6 +24,9 @@ A Node.js application to verify iOS In-App Purchases using both the ** App Store
     PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
     ENVIRONMENT=Sandbox  # or Production
     SHARED_SECRET=your_shared_secret  # Required for legacy auto-renewable subscriptions
+    
+    # Android / Google Play
+    GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account-key.json
     ```
 
 ## Running the Server
@@ -93,6 +96,28 @@ Decodes a JWS token (like `signedTransactionInfo`) without making an API call to
   {
     "success": true,
     "decoded": { "header": {}, "payload": {}, "signature": "" }
+  }
+  ```
+
+
+### 4. Verify Android Transaction
+Verifies a purchase using Google Play Developer API.
+
+- **Endpoint**: `POST /api/verify/android`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+  ```json
+  {
+    "productId": "your_product_id",
+    "token": "your_purchase_token",
+    "isSubscription": false  // Set to true for subscriptions
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "success": true,
+    "data": { "purchaseTimeMillis": "...", "purchaseState": 0, "consumptionState": 0 }
   }
   ```
 
