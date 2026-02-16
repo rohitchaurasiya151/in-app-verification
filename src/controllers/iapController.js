@@ -124,3 +124,29 @@ export const verifyAndroidTransaction = async (req, res) => {
         });
     }
 };
+
+export const getSubscriptionGroupSubscriptions = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!id) {
+            return res.status(400).json({ error: 'Subscription Group ID is required' });
+        }
+
+        console.log(`Fetching subscriptions for group: ${id}`);
+
+        const response = await client.getSubscriptionGroupSubscriptions(id);
+
+        res.json({
+            success: true,
+            data: response
+        });
+
+    } catch (error) {
+        console.error('Get Subscription Group Subscriptions Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};

@@ -10,6 +10,11 @@ export const config = {
     environment: process.env.ENVIRONMENT || 'Production', // 'Sandbox' or 'Production'
     sharedSecret: process.env.SHARED_SECRET, // For legacy receipt verification
 
+    // App Store Connect API (for managing subscriptions, etc.)
+    ascIssuerId: process.env.ASC_ISSUER_ID,
+    ascKeyId: process.env.ASC_KEY_ID,
+    ascPrivateKey: process.env.ASC_PRIVATE_KEY ? process.env.ASC_PRIVATE_KEY.replace(/\\n/g, '\n') : '',
+
     // Google Play
     googleKeyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
     googleClientEmail: process.env.GOOGLE_CLIENT_EMAIL,
