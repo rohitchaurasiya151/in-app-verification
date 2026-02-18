@@ -1,7 +1,7 @@
-
 import { AppleStoreClient } from '../AppleStoreClient.js';
 import { GooglePlayClient } from '../GooglePlayClient.js';
 import { config } from '../config.js';
+import { db } from '../db.js';
 
 const client = new AppleStoreClient();
 const googleClient = new GooglePlayClient();
@@ -21,6 +21,20 @@ export const verifyAppleTransaction = async (req, res) => {
 
         if (response.signedTransactionInfo) {
             decoded = client.decodeTransactionInfo(response.signedTransactionInfo);
+
+            // Save to local DB
+            if (decoded) {
+                db.saveSubscription({
+                    originalTransactionId: decoded.originalTransactionId,
+                    transactionId: decoded.transactionId,
+                    productId: decoded.productId,
+                    purchaseDate: decoded.purchaseDate,
+                    expirationDate: decoded.expiresDate,
+                    environment: config.environment,
+                    status: 'ACTIVE', // Assume active on verification
+                    platform: 'apple'
+                });
+            }
         }
 
         res.json({
@@ -60,6 +74,21 @@ export const verifyLegacyReceipt = async (req, res) => {
             environment: config.environment,
             data: response
         });
+
+        // Save to local DB (Best effort for legacy)
+        if (response && response.latest_receipt_info && response.latest_receipt_info.length > 0) {
+            const latest = response.latest_receipt_info[0];
+            db.saveSubscription({
+                originalTransactionId: latest.original_transaction_id,
+                transactionId: latest.transaction_id,
+                productId: latest.product_id,
+                purchaseDate: parseInt(latest.purchase_date_ms),
+                expirationDate: parseInt(latest.expires_date_ms),
+                environment: config.environment,
+                status: 'ACTIVE',
+                platform: 'apple_legacy'
+            });
+        }
 
     } catch (error) {
         console.error('Verify Legacy Receipt Error:', error);
@@ -116,6 +145,20 @@ export const verifyAndroidTransaction = async (req, res) => {
             data: response
         });
 
+        // Save to local DB if it's a subscription
+        if (isSubscription && response) {
+            db.saveSubscription({
+                originalTransactionId: response.orderId, // Android orderId is unique
+                transactionId: response.orderId,
+                productId: productId,
+                purchaseDate: parseInt(response.startTimeMillis),
+                expirationDate: parseInt(response.expiryTimeMillis),
+                environment: 'Production', // Google API is usually prod
+                status: 'ACTIVE',
+                platform: 'android'
+            });
+        }
+
     } catch (error) {
         console.error('Verify Android Transaction Error:', error);
         res.status(500).json({
@@ -144,6 +187,55 @@ export const getSubscriptionGroupSubscriptions = async (req, res) => {
 
     } catch (error) {
         console.error('Get Subscription Group Subscriptions Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+export const handleAppleWebhook = async (req, res) => {
+    try {
+        const { signedPayload } = req.body;
+
+        if (!signedPayload) {
+            return res.status(400).send('SignedPayload is required');
+        }
+
+        const decodedPayload = client.decodeJWS(signedPayload);
+        if (!decodedPayload) {
+            return res.status(400).send('Invalid JWS');
+        }
+
+        console.log(`Received Webhook: ${decodedPayload.notificationType}`);
+
+        if (decodedPayload.data && decodedPayload.data.signedTransactionInfo) {
+            const transactionInfo = client.decodeTransactionInfo(decodedPayload.data.signedTransactionInfo);
+
+            if (transactionInfo) {
+                db.handleNotification(decodedPayload.notificationType, transactionInfo);
+            }
+        }
+
+        res.status(200).send('OK');
+    } catch (error) {
+        console.error('Webhook Error:', error);
+        res.status(500).send('Error handling webhook');
+    }
+};
+
+export const getActiveSubscriptions = async (req, res) => {
+    try {
+        console.log('[iapController] Fetching active subscriptions...');
+        const subscriptions = db.getSubscriptions();
+        console.log(`[iapController] Got ${subscriptions ? subscriptions.length : 'null'} subscriptions`);
+        res.json({
+            success: true,
+            count: subscriptions.length,
+            data: subscriptions
+        });
+    } catch (error) {
+        console.error('Get Subscriptions Error:', error);
         res.status(500).json({
             success: false,
             error: error.message

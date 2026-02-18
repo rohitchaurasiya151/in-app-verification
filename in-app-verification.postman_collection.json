@@ -1,0 +1,221 @@
+{
+    "info": {
+        "_postman_id": "b1f8c4e0-5b5a-4b0e-9b9a-1c1d1e1f1g1h",
+        "name": "In-App Verification API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Health Check",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/health",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "health"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Active Subscriptions (Local DB)",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/subscriptions",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "subscriptions"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Simulate Apple Webhook",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"signedPayload\": \"eyJhbGciOiJIUzI1NiJ9.eyJub3RpZmljYXRpb25...\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/webhooks/apple",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "webhooks",
+                        "apple"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Verify Apple Transaction (Server API)",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"transactionId\": \"2000000000000000\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/verify/apple",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "verify",
+                        "apple"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Verify Legacy Receipt",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"receiptData\": \"MIIT...\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/verify/receipt",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "verify",
+                        "receipt"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Verify Android Transaction",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"productId\": \"android.test.purchased\",\n    \"token\": \"inapp:com.android.vending:android.test.purchased\",\n    \"isSubscription\": false\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/verify/android",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "verify",
+                        "android"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Decode JWS Token",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n    \"token\": \"ey...\"\n}"
+                },
+                "url": {
+                    "raw": "{{baseUrl}}/api/decode",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "decode"
+                    ]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Subscription Group Subscriptions",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/subscriptionGroups/:id/subscriptions",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "subscriptionGroups",
+                        ":id",
+                        "subscriptions"
+                    ],
+                    "variable": [
+                        {
+                            "key": "id",
+                            "value": "21400000"
+                        }
+                    ]
+                }
+            },
+            "response": []
+        }
+    ],
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        }
+    ]
+}

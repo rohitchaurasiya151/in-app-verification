@@ -1,0 +1,15 @@
+[
+  {
+    "originalTransactionId": "2000000000000001",
+    "transactionId": "2000000000000002",
+    "productId": "com.zebraLearn.reader.monthly",
+    "purchaseDate": 1771397666682,
+    "expirationDate": 1773989666682,
+    "environment": "Sandbox",
+    "status": "ACTIVE",
+    "lastNotificationType": "DID_RENEW",
+    "createdAt": "2026-02-18T06:54:26.707Z",
+    "updatedAt": "2026-02-18T06:54:26.708Z",
+    "platform": "apple"
+  }
+]

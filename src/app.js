@@ -1,7 +1,7 @@
 
 import express from 'express';
 import cors from 'cors';
-import { verifyAppleTransaction, verifyLegacyReceipt, decodeToken, verifyAndroidTransaction, getSubscriptionGroupSubscriptions } from './controllers/iapController.js';
+import { verifyAppleTransaction, verifyLegacyReceipt, decodeToken, verifyAndroidTransaction, getSubscriptionGroupSubscriptions, handleAppleWebhook, getActiveSubscriptions } from './controllers/iapController.js';
 
 const app = express();
 
@@ -14,6 +14,8 @@ app.post('/api/verify/receipt', verifyLegacyReceipt);
 app.post('/api/verify/android', verifyAndroidTransaction);
 app.post('/api/decode', decodeToken);
 app.get('/api/subscriptionGroups/:id/subscriptions', getSubscriptionGroupSubscriptions);
+app.post('/api/webhooks/apple', handleAppleWebhook);
+app.get('/api/subscriptions', getActiveSubscriptions);
 
 // Health check
 app.get('/health', (req, res) => {
