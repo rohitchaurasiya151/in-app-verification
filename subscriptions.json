@@ -11,5 +11,17 @@
     "createdAt": "2026-02-18T06:54:26.707Z",
     "updatedAt": "2026-02-18T06:54:26.708Z",
     "platform": "apple"
+  },
+  {
+    "originalTransactionId": "490002733988379",
+    "transactionId": "490002733988379",
+    "productId": "zebra_premium_yearly",
+    "purchaseDate": 1772244433000,
+    "expirationDate": 1772503633000,
+    "environment": "Production",
+    "status": "ACTIVE",
+    "platform": "apple",
+    "createdAt": "2026-02-28T06:57:47.968Z",
+    "updatedAt": "2026-02-28T06:57:47.968Z"
   }
 ]

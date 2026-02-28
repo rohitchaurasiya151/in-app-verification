@@ -242,3 +242,48 @@ export const getActiveSubscriptions = async (req, res) => {
         });
     }
 };
+
+export const getAppleSubscriptionInfo = async (req, res) => {
+    try {
+        const { transactionId } = req.params;
+
+        if (!transactionId) {
+            return res.status(400).json({ error: 'Transaction ID is required' });
+        }
+
+        console.log(`Fetching subscription info for Apple transaction: ${transactionId} in ${config.environment}`);
+
+        const response = await client.getSubscriptionInfo(transactionId);
+
+        let decodedData = null;
+
+        // Optional: decode the most recent subscription info for convenience
+        if (response.data && response.data.length > 0) {
+            const groupData = response.data[0];
+            if (groupData.lastTransactions && groupData.lastTransactions.length > 0) {
+                const latestTransaction = groupData.lastTransactions[0];
+                const decodedSignedTransactionInfo = client.decodeTransactionInfo(latestTransaction.signedTransactionInfo);
+                const decodedSignedRenewalInfo = client.decodeJWS(latestTransaction.signedRenewalInfo);
+
+                decodedData = {
+                    transactionInfo: decodedSignedTransactionInfo,
+                    renewalInfo: decodedSignedRenewalInfo
+                };
+            }
+        }
+
+        res.json({
+            success: true,
+            environment: config.environment,
+            data: response,
+            decoded: decodedData
+        });
+
+    } catch (error) {
+        console.error('Get Apple Subscription Info Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};

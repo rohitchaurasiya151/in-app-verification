@@ -209,6 +209,32 @@
                 }
             },
             "response": []
+        },
+        {
+            "name": "Get Apple Subscription Info",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/subscriptions/apple/:transactionId",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "subscriptions",
+                        "apple",
+                        ":transactionId"
+                    ],
+                    "variable": [
+                        {
+                            "key": "transactionId",
+                            "value": "2000000000000000"
+                        }
+                    ]
+                }
+            },
+            "response": []
         }
     ],
     "variable": [

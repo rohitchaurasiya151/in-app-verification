@@ -180,4 +180,32 @@ export class AppleStoreClient {
             throw error;
         }
     }
+
+    async getSubscriptionInfo(transactionId) {
+        // App Store Server API allows 1 hour for auth tokens
+        const token = this.generateAuthToken({ expiresIn: 3600 });
+        const url = `${this.baseUrl}/inApps/v1/subscriptions/${transactionId}`;
+
+        console.log(`Making request to: ${url}`);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching subscription info:', error);
+            throw error;
+        }
+    }
 }
