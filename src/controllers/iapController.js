@@ -287,3 +287,40 @@ export const getAppleSubscriptionInfo = async (req, res) => {
         });
     }
 };
+
+export const getAppleTransactionHistory = async (req, res) => {
+    try {
+        const { originalTransactionId } = req.params;
+        const { revision } = req.query;
+
+        if (!originalTransactionId) {
+            return res.status(400).json({ error: 'Original Transaction ID is required' });
+        }
+
+        console.log(`Fetching transaction history for Apple: ${originalTransactionId} in ${config.environment}`);
+
+        const response = await client.getTransactionHistory(originalTransactionId, revision);
+
+        let decodedTransactions = [];
+
+        if (response.signedTransactions && response.signedTransactions.length > 0) {
+            decodedTransactions = response.signedTransactions.map(signedInfo =>
+                client.decodeTransactionInfo(signedInfo)
+            );
+        }
+
+        res.json({
+            success: true,
+            environment: config.environment,
+            data: response,
+            decoded: decodedTransactions
+        });
+
+    } catch (error) {
+        console.error('Get Apple Transaction History Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};

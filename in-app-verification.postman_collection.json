@@ -235,6 +235,32 @@
                 }
             },
             "response": []
+        },
+        {
+            "name": "Get Apple Transaction History",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/api/history/apple/:originalTransactionId",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "history",
+                        "apple",
+                        ":originalTransactionId"
+                    ],
+                    "variable": [
+                        {
+                            "key": "originalTransactionId",
+                            "value": "2000000000000000"
+                        }
+                    ]
+                }
+            },
+            "response": []
         }
     ],
     "variable": [

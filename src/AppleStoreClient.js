@@ -208,4 +208,36 @@ export class AppleStoreClient {
             throw error;
         }
     }
+
+    async getTransactionHistory(originalTransactionId, revision = null) {
+        // App Store Server API allows 1 hour for auth tokens
+        const token = this.generateAuthToken({ expiresIn: 3600 });
+        let url = `${this.baseUrl}/inApps/v1/history/${originalTransactionId}`;
+
+        if (revision) {
+            url += `?revision=${revision}`;
+        }
+
+        console.log(`Making request to: ${url}`);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching transaction history:', error);
+            throw error;
+        }
+    }
 }
